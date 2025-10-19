@@ -203,13 +203,26 @@ class EcourtScrapper:
                 self.click_on_button(case_type=case_type)
                 time.sleep(2)
                 df= self.get_table_content()
-                refresh_btn = self._driver.find_element(By.CLASS_NAME, "refresh-btn")
-                refresh_btn.click()
                 time.sleep(2)
                 df.to_json("cause_list.json",index=False)
                 break
             except Exception as e:
                 print("Invalid captcha!")
+                try:
+                    # Wait for the popup to appear (if it's visible)
+                    WebDriverWait(self._driver, 5).until(
+                        EC.visibility_of_element_located((By.ID, "validateError"))
+                    )
+                    # Locate and click the close button inside the popup
+                    close_btn = self._driver.find_element(By.CSS_SELECTOR, "#validateError .btn-close")
+                    close_btn.click()
+                    time.sleep(1)
+                except:
+                    pass
+
+
+                refresh_btn = self._driver.find_element(By.CLASS_NAME, "refresh-btn")
+                refresh_btn.click()
                 print(e)
                 time.sleep(2)
         # Get causelist
