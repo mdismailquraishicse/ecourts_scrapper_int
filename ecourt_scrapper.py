@@ -1,6 +1,7 @@
 # Import libraries
 import re
 import time
+import argparse
 import pytesseract
 from PIL import Image
 import pandas as pd
@@ -175,15 +176,19 @@ class EcourtScrapper:
         self.close_pop_up()
         # Select state
         self.get_dropdown(name=state_name, flag=1)
+        self.select_from_dropdown(name=state_name)
         time.sleep(2)
         # Select district
         self.get_dropdown(name=district_name, flag=2)
+        self.select_from_dropdown(name=district_name)
         time.sleep(2)
         # Select court complex
         self.get_dropdown(name=court_complex_name, flag=3)
+        self.select_from_dropdown(name=court_complex_name)
         time.sleep(2)
         # Select court name
         self.get_dropdown(name=court_name, flag=4)
+        self.select_from_dropdown(name=court_name)
         time.sleep(2)
         # Fill date
         self.validate_date(date_=cause_list_date)
@@ -199,26 +204,59 @@ class EcourtScrapper:
                 time.sleep(2)
                 df= self.get_table_content()
                 time.sleep(2)
+                df.to_json("cause_list.json",index=False)
                 break
             except Exception as e:
                 print("Invalid captcha!")
+                try:
+                    # Wait for the popup to appear (if it's visible)
+                    WebDriverWait(self._driver, 5).until(
+                        EC.visibility_of_element_located((By.ID, "validateError"))
+                    )
+                    # Locate and click the close button inside the popup
+                    close_btn = self._driver.find_element(By.CSS_SELECTOR, "#validateError .btn-close")
+                    close_btn.click()
+                    time.sleep(1)
+                except:
+                    pass
+
+
+                refresh_btn = self._driver.find_element(By.CLASS_NAME, "refresh-btn")
+                refresh_btn.click()
                 print(e)
                 time.sleep(2)
         # Get causelist
-        df.to_json("cause_list.json",index=False)
-# if __name__=="__main__":
-#     state_name= "West Bengal"
-#     district_name= "Paschim Bardhaman"
-#     court_complex_name="ASANSOL COURT COMPLEX"
-#     court_name="9-Indrani Gupta-CJM"
-#     case_type="criminal"
-#     cause_list_date="21-10-2025" # optional: current date if null
-#     ecourts_scrapper= EcourtScrapper()
-#     ecourts_scrapper.pipeline_couselist(
-#         state_name=state_name,
-#         district_name=district_name,
-#         court_complex_name=court_complex_name,
-#         court_name=court_name,
-#         cause_list_date=cause_list_date,
-#         case_type=case_type
-#         )
+        
+if __name__=="__main__":
+    parser= argparse.ArgumentParser(description="To pass variables from terminal")
+    parser.add_argument("--state_name", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--district_name", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--court_complex", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--court_name", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--case_type", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--causelist_date", type=str, required=False, help="Enter the state name")
+    args= parser.parse_args()
+
+    state_name= args.state_name.title()
+    district_name= args.district_name.title()
+    court_complex_name= args.court_complex.upper()
+    court_name= args.court_name
+    case_type= args.case_type
+    cause_list_date= args.causelist_date # optional: current date if null
+
+    # state_name= "West Bengal"
+    # district_name= "Paschim Bardhaman"
+    # court_complex_name="ASANSOL COURT COMPLEX"
+    # court_name="9-Indrani Gupta-CJM"
+    # case_type="criminal"
+    # cause_list_date="21-10-2025" # optional: current date if null
+
+    ecourts_scrapper= EcourtScrapper()
+    ecourts_scrapper.pipeline_couselist(
+        state_name=state_name,
+        district_name=district_name,
+        court_complex_name=court_complex_name,
+        court_name=court_name,
+        cause_list_date=cause_list_date,
+        case_type=case_type
+        )
