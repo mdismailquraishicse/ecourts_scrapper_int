@@ -31,6 +31,7 @@ class EcourtScrapper:
         self._civil_path= "//button[@onclick=\"submit_causelist('civ')\"]"
         self._causelist_datefill_id= "causelist_date"
         self._disp_table_id= "dispTable"
+        self._current_element= None
         self._driver= Chrome()
         
     def goto_home_page(self):
@@ -55,6 +56,10 @@ class EcourtScrapper:
             print("Close button not clickable:", e)
 
     def get_dropdown(self, name= "West Bengal", flag=1):
+        result= []
+        if flag <0 and flag >5:
+            print("Invalid flag: must be between 1-4.")
+            return False
         if flag==1:
             dropdown = self._driver.find_element(By.ID, self._state_id)
         elif flag==2:
@@ -67,13 +72,16 @@ class EcourtScrapper:
             print("Invalid flag: must be between 1-4.")
             return False
         select= Select(dropdown)
+        self._current_element= select
         options= select.options
         for opt in options:
-            # print(opt.text, " --> ", opt.get_attribute("value"))
-            pass
-        # select states/distirct
-        select.select_by_visible_text(name)
+            result.append(opt.text)
+        return result
+
+    def select_from_dropdown(self, name:str):
+        self._current_element.select_by_visible_text(name)
         print(f"selected {name}")
+        return True
 
     def captcha_filler(self):
         captcha_element= self._driver.find_element(By.ID, self._captcha_id)
@@ -198,19 +206,19 @@ class EcourtScrapper:
                 time.sleep(2)
         # Get causelist
         df.to_json("cause_list.json",index=False)
-if __name__=="__main__":
-    state_name= "West Bengal"
-    district_name= "Paschim Bardhaman"
-    court_complex_name="ASANSOL COURT COMPLEX"
-    court_name="9-Indrani Gupta-CJM"
-    case_type="criminal"
-    cause_list_date="21-10-2025" # optional: current date if null
-    ecourts_scrapper= EcourtScrapper()
-    ecourts_scrapper.pipeline_couselist(
-        state_name=state_name,
-        district_name=district_name,
-        court_complex_name=court_complex_name,
-        court_name=court_name,
-        cause_list_date=cause_list_date,
-        case_type=case_type
-        )
+# if __name__=="__main__":
+#     state_name= "West Bengal"
+#     district_name= "Paschim Bardhaman"
+#     court_complex_name="ASANSOL COURT COMPLEX"
+#     court_name="9-Indrani Gupta-CJM"
+#     case_type="criminal"
+#     cause_list_date="21-10-2025" # optional: current date if null
+#     ecourts_scrapper= EcourtScrapper()
+#     ecourts_scrapper.pipeline_couselist(
+#         state_name=state_name,
+#         district_name=district_name,
+#         court_complex_name=court_complex_name,
+#         court_name=court_name,
+#         cause_list_date=cause_list_date,
+#         case_type=case_type
+#         )
