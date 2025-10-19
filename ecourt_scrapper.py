@@ -56,7 +56,7 @@ class EcourtScrapper:
         except Exception as e:
             print("Close button not clickable:", e)
 
-    def get_dropdown(self, name= "West Bengal", flag=1):
+    def get_dropdown(self, flag=1):
         result= []
         if flag <0 and flag >5:
             print("Invalid flag: must be between 1-4.")
@@ -175,19 +175,19 @@ class EcourtScrapper:
         self.nevigate_to_causelist_page()
         self.close_pop_up()
         # Select state
-        self.get_dropdown(name=state_name, flag=1)
+        self.get_dropdown(flag=1)
         self.select_from_dropdown(name=state_name)
         time.sleep(2)
         # Select district
-        self.get_dropdown(name=district_name, flag=2)
+        self.get_dropdown(flag=2)
         self.select_from_dropdown(name=district_name)
         time.sleep(2)
         # Select court complex
-        self.get_dropdown(name=court_complex_name, flag=3)
+        self.get_dropdown(flag=3)
         self.select_from_dropdown(name=court_complex_name)
         time.sleep(2)
         # Select court name
-        self.get_dropdown(name=court_name, flag=4)
+        self.get_dropdown(flag=4)
         self.select_from_dropdown(name=court_name)
         time.sleep(2)
         # Fill date
