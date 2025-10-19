@@ -16,6 +16,7 @@ from selenium.webdriver.support.ui import Select
 cause_list_id= "leftPaneMenuCL"
 close_btn_cl_class= "btn-close"
 crn = "MHAU019999992015"
+
 chrome= Chrome()
 chrome.get("https://services.ecourts.gov.in/ecourtindia_v6/")
 time.sleep(1)
@@ -35,7 +36,7 @@ try:
 except Exception as e:
     print("Close button not clickable:", e)
 
-# DROP DOWN
+# DROP DOWN STATE
 dropdown = chrome.find_element(By.ID, "sess_state_code")
 select= Select(dropdown)
 options= select.options
@@ -47,6 +48,48 @@ time.sleep(2)
 select.select_by_visible_text("West Bengal")
 print("stated selected")
 time.sleep(5)
+# DROPDOWN DIST
+try:
+    district_dropdown = WebDriverWait(chrome, 10).until(
+        EC.presence_of_element_located((By.ID, "sess_dist_code"))
+    )
+    district_select = Select(district_dropdown)
+
+    # Get district options (skip default "Select district")
+    district_options = [
+        opt.text.strip()
+        for opt in district_select.options
+        if opt.get_attribute("value") != "0"
+    ]
+
+    print("Districts in West Bengal:")
+    for district in district_options:
+        print("-", district)
+
+# SELECT DIST
+    district_select.select_by_visible_text("Paschim Bardhaman")
+    print("district selected")
+    time.sleep(5)
+except Exception as e:
+    print("District dropdown not found:", e)
+# COURT COMPLEX
+try:
+    # Wait for court complex dropdown to appear
+    court_complex_dropdown = WebDriverWait(chrome, 10).until(
+        EC.presence_of_element_located((By.ID, "court_complex_code"))
+    )
+    court_complex_select = Select(court_complex_dropdown)
+
+    # ✅ Option 1: Select by visible text
+    court_complex_select.select_by_visible_text("ASANSOL COURT COMPLEX")
+    print("Selected: ASANSOL COURT COMPLEX")
+
+    # ✅ (Optional) Small delay to let JS load dependent data
+    time.sleep(2)
+
+except Exception as e:
+    print("Court complex dropdown not found or option not selectable:",e)
+    
 # crn_input= chrome.find_element(By.ID, "cino")
 # crn_input.clear()
 # crn_input.send_keys(crn)
