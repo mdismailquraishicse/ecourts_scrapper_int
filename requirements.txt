@@ -2,3 +2,4 @@ pytesseract
 pillow
 pandas
 selenium
+fastapi
