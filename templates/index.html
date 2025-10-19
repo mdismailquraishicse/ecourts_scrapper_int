@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Court Selection</title>
+    <script src="/static/script.js"></script>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 30px;">
+
+    <h2 style="color: #333; margin-bottom: 20px;">Select Court Details</h2>
+
+    <!-- Select State -->
+    <div style="margin-bottom: 15px;">
+        <label style="display: inline-block; width: 150px;">Select State:</label>
+        <select id="state" onchange="fetchDistricts()" style="padding: 5px; width: 250px;">
+            <option value="">--Select State--</option>
+            {% for state in states %}
+                <option value="{{ state }}">{{ state }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Select District -->
+    <div style="margin-bottom: 15px;">
+        <label style="display: inline-block; width: 150px;">Select District:</label>
+        <select id="district" onchange="fetchComplexes()" style="padding: 5px; width: 250px;">
+            <option value="">--Select District--</option>
+        </select>
+    </div>
+
+    <!-- Select Court Complex -->
+    <div style="margin-bottom: 15px;">
+        <label style="display: inline-block; width: 150px;">Select Court Complex:</label>
+        <select id="complex" onchange="fetchCourts()" style="padding: 5px; width: 250px;">
+            <option value="">--Select Complex--</option>
+        </select>
+    </div>
+
+    <!-- Select Court Name -->
+    <div style="margin-bottom: 15px;">
+        <label style="display: inline-block; width: 150px;">Select Court Name:</label>
+        <select id="court" style="padding: 5px; width: 250px;">
+            <option value="">--Select Court--</option>
+        </select>
+    </div>
+
+    <!-- Cause List Date -->
+    <div style="margin-bottom: 20px;">
+        <label style="display: inline-block; width: 150px;">Cause List Date:</label>
+        <input type="date" id="causeDate" value="{{ today }}" style="padding: 5px; width: 250px;">
+    </div>
+
+    <!-- Action Buttons -->
+    <div>
+        <button id="criminalBtn" style="padding: 10px 20px; margin-right: 10px; background-color: #f44336; color: white; border: none; cursor: pointer;">Criminal</button>
+        <button id="civilBtn" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Civil</button>
+    </div>
+
+</body>
+</html>
