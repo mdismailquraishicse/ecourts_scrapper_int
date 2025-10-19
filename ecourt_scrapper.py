@@ -1,6 +1,7 @@
 # Import libraries
 import re
 import time
+import argparse
 import pytesseract
 from PIL import Image
 import pandas as pd
@@ -206,19 +207,36 @@ class EcourtScrapper:
                 time.sleep(2)
         # Get causelist
         df.to_json("cause_list.json",index=False)
-# if __name__=="__main__":
-#     state_name= "West Bengal"
-#     district_name= "Paschim Bardhaman"
-#     court_complex_name="ASANSOL COURT COMPLEX"
-#     court_name="9-Indrani Gupta-CJM"
-#     case_type="criminal"
-#     cause_list_date="21-10-2025" # optional: current date if null
-#     ecourts_scrapper= EcourtScrapper()
-#     ecourts_scrapper.pipeline_couselist(
-#         state_name=state_name,
-#         district_name=district_name,
-#         court_complex_name=court_complex_name,
-#         court_name=court_name,
-#         cause_list_date=cause_list_date,
-#         case_type=case_type
-#         )
+if __name__=="__main__":
+    parser= argparse.ArgumentParser(description="To pass variables from terminal")
+    parser.add_argument("--state_name", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--district_name", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--court_complex", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--court_name", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--case_type", type=str, required=True, help="Enter the state name")
+    parser.add_argument("--causelist_date", type=str, required=False, help="Enter the state name")
+    args= parser.parse_args()
+
+    state_name= args.state_name
+    district_name= args.district_name
+    court_complex_name= args.court_complex
+    court_name= args.court_name
+    case_type= args.case_type
+    cause_list_date= args.causelist_date # optional: current date if null
+
+    # state_name= "West Bengal"
+    # district_name= "Paschim Bardhaman"
+    # court_complex_name="ASANSOL COURT COMPLEX"
+    # court_name="9-Indrani Gupta-CJM"
+    # case_type="criminal"
+    # cause_list_date="21-10-2025" # optional: current date if null
+
+    ecourts_scrapper= EcourtScrapper()
+    ecourts_scrapper.pipeline_couselist(
+        state_name=state_name,
+        district_name=district_name,
+        court_complex_name=court_complex_name,
+        court_name=court_name,
+        cause_list_date=cause_list_date,
+        case_type=case_type
+        )
