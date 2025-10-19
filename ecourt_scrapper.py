@@ -154,35 +154,63 @@ class EcourtScrapper:
             print("Error while scraping:", e)
             return None
         
-    def pipeline_couselist(self):
+    def pipeline_couselist(
+            self, state_name:str,
+            district_name:str,
+            court_complex_name:str,
+            court_name:str,
+            case_type:str,
+            cause_list_date: str=None
+            ):
         self.goto_home_page()
         self.nevigate_to_causelist_page()
         self.close_pop_up()
         # Select state
-        self.get_dropdown(name="West Bengal", flag=1)
+        self.get_dropdown(name=state_name, flag=1)
         time.sleep(2)
         # Select district
-        self.get_dropdown(name="Paschim Bardhaman", flag=2)
+        self.get_dropdown(name=district_name, flag=2)
         time.sleep(2)
         # Select court complex
-        self.get_dropdown(name="ASANSOL COURT COMPLEX", flag=3)
+        self.get_dropdown(name=court_complex_name, flag=3)
         time.sleep(2)
         # Select court name
-        self.get_dropdown(name="9-Indrani Gupta-CJM", flag=4)
+        self.get_dropdown(name=court_name, flag=4)
         time.sleep(2)
         # Fill date
-        self.validate_date(date_="21-10-2025")
-        self.put_causelist_date(date_="21-10-2025")
+        self.validate_date(date_=cause_list_date)
+        self.put_causelist_date(date_=cause_list_date)
         time.sleep(2)
-        # fill captcha
-        self.captcha_filler()
-        time.sleep(2)
-        # Submit form
-        self.click_on_button(case_type="criminal")
-        time.sleep(2)
+        for i in range(5):
+            try:
+                # fill captcha
+                self.captcha_filler()
+                time.sleep(2)
+                # Submit form
+                self.click_on_button(case_type=case_type)
+                time.sleep(2)
+                df= self.get_table_content()
+                time.sleep(2)
+                break
+            except Exception as e:
+                print("Invalid captcha!")
+                print(e)
+                time.sleep(2)
         # Get causelist
-        df= self.get_table_content()
         df.to_json("cause_list.json",index=False)
 if __name__=="__main__":
+    state_name= "West Bengal"
+    district_name= "Paschim Bardhaman"
+    court_complex_name="ASANSOL COURT COMPLEX"
+    court_name="9-Indrani Gupta-CJM"
+    case_type="criminal"
+    cause_list_date="21-10-2025" # optional: current date if null
     ecourts_scrapper= EcourtScrapper()
-    ecourts_scrapper.pipeline_couselist()
+    ecourts_scrapper.pipeline_couselist(
+        state_name=state_name,
+        district_name=district_name,
+        court_complex_name=court_complex_name,
+        court_name=court_name,
+        cause_list_date=cause_list_date,
+        case_type=case_type
+        )
