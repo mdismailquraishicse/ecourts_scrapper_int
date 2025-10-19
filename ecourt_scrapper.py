@@ -56,7 +56,7 @@ class EcourtScrapper:
         except Exception as e:
             print("Close button not clickable:", e)
 
-    def get_dropdown(self, name= "West Bengal", flag=1):
+    def get_dropdown(self, flag=1):
         result= []
         if flag <0 and flag >5:
             print("Invalid flag: must be between 1-4.")
@@ -175,19 +175,19 @@ class EcourtScrapper:
         self.nevigate_to_causelist_page()
         self.close_pop_up()
         # Select state
-        self.get_dropdown(name=state_name, flag=1)
+        self.get_dropdown(flag=1)
         self.select_from_dropdown(name=state_name)
         time.sleep(2)
         # Select district
-        self.get_dropdown(name=district_name, flag=2)
+        self.get_dropdown(flag=2)
         self.select_from_dropdown(name=district_name)
         time.sleep(2)
         # Select court complex
-        self.get_dropdown(name=court_complex_name, flag=3)
+        self.get_dropdown(flag=3)
         self.select_from_dropdown(name=court_complex_name)
         time.sleep(2)
         # Select court name
-        self.get_dropdown(name=court_name, flag=4)
+        self.get_dropdown(flag=4)
         self.select_from_dropdown(name=court_name)
         time.sleep(2)
         # Fill date
@@ -230,11 +230,11 @@ class EcourtScrapper:
 if __name__=="__main__":
     parser= argparse.ArgumentParser(description="To pass variables from terminal")
     parser.add_argument("--state_name", type=str, required=True, help="Enter the state name")
-    parser.add_argument("--district_name", type=str, required=True, help="Enter the state name")
-    parser.add_argument("--court_complex", type=str, required=True, help="Enter the state name")
-    parser.add_argument("--court_name", type=str, required=True, help="Enter the state name")
-    parser.add_argument("--case_type", type=str, required=True, help="Enter the state name")
-    parser.add_argument("--causelist_date", type=str, required=False, help="Enter the state name")
+    parser.add_argument("--district_name", type=str, required=True, help="Enter the district name")
+    parser.add_argument("--court_complex", type=str, required=True, help="Enter the court complex name")
+    parser.add_argument("--court_name", type=str, required=True, help="Enter the court name")
+    parser.add_argument("--case_type", type=str, required=True, help="Enter the case type")
+    parser.add_argument("--causelist_date", type=str, required=False, help="Enter the cause list date")
     args= parser.parse_args()
 
     state_name= args.state_name.title()
@@ -243,13 +243,6 @@ if __name__=="__main__":
     court_name= args.court_name
     case_type= args.case_type
     cause_list_date= args.causelist_date # optional: current date if null
-
-    # state_name= "West Bengal"
-    # district_name= "Paschim Bardhaman"
-    # court_complex_name="ASANSOL COURT COMPLEX"
-    # court_name="9-Indrani Gupta-CJM"
-    # case_type="criminal"
-    # cause_list_date="21-10-2025" # optional: current date if null
 
     ecourts_scrapper= EcourtScrapper()
     ecourts_scrapper.pipeline_couselist(
